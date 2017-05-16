@@ -14,8 +14,12 @@ services:
 env:
     matrix:
         - TOXENV=py27
+          PIPELINE_SASS_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/node-sass
+          PIPELINE_CSS_COMPRESSOR=pipeline.compressors.cssmin.CSSMinCompressor
+          PIPELINE_CSSMIN_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/cssmin
+          PIPELINE_JS_COMPRESSOR=pipeline.compressors.uglifyjs.UglifyJSCompressor
+          PIPELINE_UGLIFYJS_BINARY=$TRAVIS_BUILD_DIR/usr/bin/uglifyjs
     global:
-        - SASS_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/node-sass
         - DJANGO_SETTINGS_MODULE=kuma.settings.travis
         - DEBIAN_FRONTEND=noninteractive
         - DATABASE_URL=mysql://root:kuma@localhost:3306/kuma
@@ -30,7 +34,10 @@ install:
     - pip install -r requirements/travis.txt
     - nvm install 6
     - nvm use 6
-    - npm install
+    - if [[ $TOXENV == 'py27' ]]; then
+        npm install
+        npm install cssmin@0.4.3 uglify-js@2.4.13
+      fi
 script: tox -v
 after_failure:
     - dmesg | tail
