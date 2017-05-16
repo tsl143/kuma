@@ -4,7 +4,7 @@ set -x
 export LC_CTYPE=en_US.UTF-8
 
 # Download ElasticSearch
-if [ -n "${ES_DOWNLOAD_URL:-}" ]
+if [ ${INSTALL_ELASTICSEARCH:-0} -ne 0 ]
 then
     mkdir -p downloads
     wget -q -O downloads/elasticsearch-$ES_VERSION.tar.gz $ES_DOWNLOAD_URL
@@ -12,20 +12,20 @@ then
 fi
 
 # Run ElasticSearch in background
-(if [ -n "${ES_DOWNLOAD_URL:-}" ]
+(if [ ${INSTALL_ELASTICSEARCH:-0} -ne 0 ]
 then
     ./elasticsearch-$ES_VERSION/bin/elasticsearch 1> elasticsearch.log 2> elasticsearch.err
 fi) &
 
 
 # Get database ready
-if [ -n "${DATABASE_URL:-}" ]
+if [ -n "${CREATE_DB:-}" ]
 then
-    mysql -e 'CREATE DATABASE IF NOT EXISTS kuma;';
+    mysql -e "CREATE DATABASE IF NOT EXISTS ${CREATE_DB};";
 fi
 
 # Install pipeline toolchain
-if [ -n "${PIPELINE_SASS_BINARY}" ]
+if [ ${INSTALL_PIPELINE:-0} -ne 0 ]
 then
     npm install
     npm install cssmin@0.4.3
@@ -33,7 +33,7 @@ then
 fi
 
 # Install docker-compose
-if [ -n "${DOCKER_COMPOSE_VERSION:-}" ]
+if [ ${INSTALL_DOCKER_COMPOSE:--} -ne 0 ]
 then
     mkdir -p downloads
     DOCKER_COMPOSE_FILE=downloads/docker-compose-${DOCKER_COMPOSE_VERSION}
