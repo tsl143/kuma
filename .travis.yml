@@ -32,6 +32,8 @@ env:
         - TOXENV=docker
           DOCKER_COMPOSE_VERSION=1.9.0
         - TOXENV=stylelint
+    global:
+        - DJANGO_SETTINGS_MODULE=kuma.settings.travis
 matrix:
     allow_failures:
         - env: TOXENV=locales DOCKER_COMPOSE_VERSION=1.9.0
