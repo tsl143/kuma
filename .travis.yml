@@ -15,6 +15,7 @@ env:
     matrix:
         - TOXENV=py27
     global:
+        - SASS_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/node-sass
         - DJANGO_SETTINGS_MODULE=kuma.settings.travis
         - DEBIAN_FRONTEND=noninteractive
         - DATABASE_URL=mysql://root:kuma@localhost:3306/kuma
@@ -29,7 +30,7 @@ install:
     - pip install -r requirements/travis.txt
     - nvm install 6
     - nvm use 6
-    - npm install -g
+    - npm install
 script: tox -v
 after_failure:
     - dmesg | tail
