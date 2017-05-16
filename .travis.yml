@@ -12,11 +12,6 @@ services:
 env:
     matrix:
         - TOXENV=py27
-        - TOXENV=flake8
-        - TOXENV=docs
-        - TOXENV=locales DOCKER_COMPOSE_VERSION=1.9.0
-        - TOXENV=docker DOCKER_COMPOSE_VERSION=1.9.0 UID=0
-        - TOXENV=stylelint
     global:
         - DJANGO_SETTINGS_MODULE=kuma.settings.travis
         - DEBIAN_FRONTEND=noninteractive
@@ -30,7 +25,6 @@ before_install:
     - pip install -U pip
 install:
     - pip install -r requirements/travis.txt
-    - if [[ $TOXENV == 'py27' ]]; then ansible-playbook -vvv --tags=mysql,pipeline --connection=local --inventory-file=provisioning/inventory provisioning/travis.yml; fi
     - nvm install 6
     - nvm use 6
 script: tox -v
