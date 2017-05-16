@@ -24,7 +24,7 @@ env:
           PIPELINE_UGLIFYJS_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/uglifyjs
           DATABASE_URL=mysql://root:@127.0.0.1:3306/kuma
           ES_VERSION=2.4.5
-          ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ES_VERSION}/elasticsearch-${ES_VERSION}.tar.gz
+          ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/$ES_VERSION/elasticsearch-$ES_VERSION.tar.gz
     global:
         - DJANGO_SETTINGS_MODULE=kuma.settings.travis
         - DEBIAN_FRONTEND=noninteractive
@@ -40,12 +40,12 @@ install:
     - pip install -r requirements/travis.txt
     - nvm install 6
     - nvm use 6
-    - if [[ $TOXENV == 'py27' ]];
+    - (if [[ $TOXENV == 'py27' ]];
       then
         wget $ES_DOWNLOAD_URL;
         tar -zxf elasticsearch-$ES_VERSION.tar.gz;
-        ./elasticsearch-$ES_VERSION/bin/elasticsearch &;
-      fi
+        ./elasticsearch-$ES_VERSION/bin/elasticsearch;
+      fi)&
     - if [[ $TOXENV == 'py27' ]];
       then
         mysql -e 'CREATE DATABASE IF NOT EXISTS kuma;';
