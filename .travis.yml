@@ -31,6 +31,7 @@ env:
           DOCKER_COMPOSE_VERSION=1.9.0
         - TOXENV=docker
           DOCKER_COMPOSE_VERSION=1.9.0
+          UID=`uid -u $USER`
         - TOXENV=stylelint
 matrix:
     allow_failures:

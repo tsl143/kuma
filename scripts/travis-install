@@ -45,5 +45,4 @@ then
     fi
     chmod +x $DOCKER_COMPOSE_FILE
     sudo cp $DOCKER_COMPOSE_FILE /usr/local/bin/docker-compose
-    mkdir -p build/locale
 fi
