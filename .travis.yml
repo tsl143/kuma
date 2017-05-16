@@ -35,7 +35,7 @@ install:
     - nvm install 6
     - nvm use 6
     - if [[ $TOXENV == 'py27' ]];
-      then;
+      then
         npm install;
         npm install cssmin@0.4.3 uglify-js@2.4.13;
       fi
