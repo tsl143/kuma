@@ -9,6 +9,8 @@ python:
 services:
     - docker
     - memcached
+    - mysql
+    - elasticsearch
 env:
     matrix:
         - TOXENV=py27
