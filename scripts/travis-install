@@ -2,10 +2,42 @@
 set -e
 set -x
 export LC_CTYPE=en_US.UTF-8
+ES_DOWNLOAD_URL
 
-if [ "$TOXENV" == "docker" -o "$TOXENV" == "locales" ]
+# Download ElasticSearch
+if [ -n "${ES_DOWNLOAD_URL:-}" ]
 then
-    curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-    chmod +x docker-compose
-    sudo mv docker-compose /usr/local/bin
+    mkdir -p downloads
+    wget -q -O downloads/elasticsearch-$ES_VERSION.tar.gz $ES_DOWNLOAD_URL
+    tar -zxf downloads/elasticsearch-$ES_VERSION.tar.gz
+fi
+
+# Run ElasticSearch in background
+(if [ -n "${ES_DOWNLOAD_URL:-}" ]
+then
+    ./elasticsearch-$ES_VERSION/bin/elasticsearch 1> elasticsearch.log 2> elasticsearch.err
+fi) &
+
+
+# Get database ready
+if [ -n "${DATABASE_URL:-}" ]
+then
+    mysql -e 'CREATE DATABASE IF NOT EXISTS kuma;';
+fi
+
+# Install pipeline toolchain
+if [ -n "${PIPELINE_SASS_BINARY}" ]
+then
+    npm install
+    npm install cssmin@0.4.3
+    npm install uglify-js@2.4.13
+fi
+
+# Install docker-compose
+if [ -n "${DOCKER_COMPOSE_VERSION:-}" ]
+then
+    mkdir -p downloads
+    wget -q -O downloads/docker-compose-${DOCKER_COMPOSE_VERSION} https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` downloads/docker-compose-${DOCKER_COMPOSE_VERSION}
+    chmod +x downloads/docker-compose-${DOCKER_COMPOSE_VERSION}
+    sudo cp docker-compose-${DOCKER_COMPOSE_VERSION} /usr/local/bin/docker-compose
 fi

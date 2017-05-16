@@ -6,6 +6,7 @@ cache:
     pip: True
     directories:
       - node_modules
+      - downloads
 language: python
 python:
     - "2.7"
@@ -13,7 +14,6 @@ services:
     - docker
     - memcached
     - mysql
-    - elasticsearch
 env:
     matrix:
         - TOXENV=py27
@@ -40,25 +40,9 @@ install:
     - pip install -r requirements/travis.txt
     - nvm install 6
     - nvm use 6
-    - (if [[ $TOXENV == 'py27' ]];
-      then
-        wget $ES_DOWNLOAD_URL;
-        tar -zxf elasticsearch-$ES_VERSION.tar.gz;
-        ./elasticsearch-$ES_VERSION/bin/elasticsearch;
-      fi) &
-    - if [[ $TOXENV == 'py27' ]];
-      then
-        mysql -e 'CREATE DATABASE IF NOT EXISTS kuma;';
-      fi
-    - if [[ $TOXENV == 'py27' ]];
-      then
-        npm install;
-        npm install cssmin@0.4.3;
-        npm install uglify-js@2.4.13;
-      fi
 script:
-    # Wait for ElasticSearch
-    wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200;
+    # Wait for ElasticSearch to be ready
+    if [ -n "${ES_DOWNLOAD_URL:-}" ]; then wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200; fi;
     tox -v
 after_failure:
     - dmesg | tail
