@@ -2,7 +2,10 @@ sudo: required
 branches:
     only:
         - master
-cache: pip
+cache:
+    pip: True
+    directories:
+      - node_modules
 language: python
 python:
     - "2.7"
@@ -18,7 +21,7 @@ env:
           PIPELINE_CSS_COMPRESSOR=pipeline.compressors.cssmin.CSSMinCompressor
           PIPELINE_CSSMIN_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/cssmin
           PIPELINE_JS_COMPRESSOR=pipeline.compressors.uglifyjs.UglifyJSCompressor
-          PIPELINE_UGLIFYJS_BINARY=$TRAVIS_BUILD_DIR/usr/bin/uglifyjs
+          PIPELINE_UGLIFYJS_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/uglifyjs
     global:
         - DJANGO_SETTINGS_MODULE=kuma.settings.travis
         - DEBIAN_FRONTEND=noninteractive
@@ -37,7 +40,8 @@ install:
     - if [[ $TOXENV == 'py27' ]];
       then
         npm install;
-        npm install cssmin@0.4.3 uglify-js@2.4.13;
+        npm install cssmin@0.4.3;
+        npm install uglify-js@2.4.13;
       fi
 script: tox -v
 after_failure:
