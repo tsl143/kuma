@@ -30,7 +30,6 @@ env:
           CREATE_DB=kuma
           INSTALL_PIPELINE=1
           INSTALL_ELASTICSEARCH=1
-          PYTHONHASHSEED=0
         - TOXENV=flake8
         - TOXENV=docs
         - TOXENV=locales
@@ -44,12 +43,12 @@ env:
           CREATE_DB=kuma
           INSTALL_PIPELINE=1
           INSTALL_ELASTICSEARCH=1
-          NO_PYTHONHASHSEED=1
+          PYTHONHASHSEED=random
 
 matrix:
     allow_failures:
         - env: TOXENV=locales INSTALL_DOCKER_COMPOSE=1
-        - env: TOXENV=py27 CREATE_DB=kuma INSTALL_PIPELINE=1 INSTALL_ELASTICSEARCH=1 NO_PYTHONHASHSEED=1
+        - env: TOXENV=py27 CREATE_DB=kuma INSTALL_PIPELINE=1 INSTALL_ELASTICSEARCH=1 PYTHONHASHSEED=random
 install:
     - nvm install 6
     - nvm use 6
