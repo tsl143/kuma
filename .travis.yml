@@ -23,6 +23,8 @@ env:
           PIPELINE_JS_COMPRESSOR=pipeline.compressors.uglifyjs.UglifyJSCompressor
           PIPELINE_UGLIFYJS_BINARY=$TRAVIS_BUILD_DIR/node_modules/.bin/uglifyjs
           DATABASE_URL=mysql://root:@127.0.0.1:3306/kuma
+          ES_VERSION=2.4.5
+          ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ES_VERSION}/elasticsearch-${ES_VERSION}.tar.gz
     global:
         - DJANGO_SETTINGS_MODULE=kuma.settings.travis
         - DEBIAN_FRONTEND=noninteractive
@@ -33,7 +35,6 @@ matrix:
         - env: TOXENV=locales DOCKER_COMPOSE_VERSION=1.9.0
 before_install:
     - scripts/travis-install
-    - if [[ $TOXENV == 'py27' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS kuma;'; fi
     - pip install -U pip
 install:
     - pip install -r requirements/travis.txt
@@ -41,11 +42,18 @@ install:
     - nvm use 6
     - if [[ $TOXENV == 'py27' ]];
       then
+        wget ${ES_DOWNLOAD_URL}
+        tar -zxf elasticsearch-${ES_VERSION}.tar.gz
+        ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
+        mysql -e 'CREATE DATABASE IF NOT EXISTS kuma;';
         npm install;
         npm install cssmin@0.4.3;
         npm install uglify-js@2.4.13;
       fi
-script: tox -v
+script:
+    # Wait for ElasticSearch
+    wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
+    tox -v
 after_failure:
     - dmesg | tail
 after_success:
