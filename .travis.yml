@@ -42,9 +42,9 @@ install:
     - nvm use 6
     - if [[ $TOXENV == 'py27' ]];
       then
-        wget ${ES_DOWNLOAD_URL}
-        tar -zxf elasticsearch-${ES_VERSION}.tar.gz
-        ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
+        wget ${ES_DOWNLOAD_URL};
+        tar -zxf elasticsearch-${ES_VERSION}.tar.gz;
+        ./elasticsearch-${ES_VERSION}/bin/elasticsearch &;
         mysql -e 'CREATE DATABASE IF NOT EXISTS kuma;';
         npm install;
         npm install cssmin@0.4.3;
