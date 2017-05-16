@@ -25,6 +25,7 @@ matrix:
 before_install:
     - scripts/travis-install
     - pip install -U pip
+    - if [[ $TOXENV == 'py27' ]]; then apt-get install -y libmysqlclient-dev; fi
 install:
     - pip install -r requirements/travis.txt
     - nvm install 6
